@@ -1,3 +1,11 @@
+Last Update: 2017:09:08 10:41 CEST  (UTC +1)
+
+- CommitID: -1 (unreleased)
+- Branch: GoldenrodLeverPuzzle
+- Features:
+    - intelligent lever puzzle solver
+
+
 Questing.lua :
 
 A Lua script for PROShine that plays Pokemon Revolution Online for you from the very Start to as far as possible.
