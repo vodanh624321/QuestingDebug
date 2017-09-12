@@ -152,16 +152,27 @@ function GoldenrodCityQuest:PokecenterGoldenrod()
             --check for oddish
             sys.todo("Adding checks for (1)bellsprout with sleep powder, (2)odish and "..
             "(3)bellsprout below sleep powder level or (4-8)theier evolutions.", "GoldenRodCityQuest.PokecenterGoldenro")
-            local pkmId, boxId = pc.retrieveFirstWithMoveFrom("Oddish", "Johto")
 
-            -- no solution
-            if not pkmId then self.need_oddish = true
+			local regionMatches = {"Jotho"}
+			local moveMatches = {"Sleep Powder"}
+            local result, boxId = pc.retrieveFirstWithMovesFromRegions(moveMatches, regionMatches)
+
+			--need to be verified with ingame data
+			--oddish, gloom --15
+			--Bellsprout, Weepinbell --13
+			local pkmMatches = {"Oddish", "Gloom", "Bellsprout", "Weepinbell" }
+
+
+
+			-- no solution
+            if result == pc.result.NO_RESULT then self.need_oddish = true
 
             --still searching
-            elseif not boxId then return sys.debug("Starting PC or Switching Boxes")
+            elseif result == pc.result.STILL_WORKING then return sys.debug("Starting PC or Switching Boxes")
 
             --solution found and gastly in team
-            else
+			else
+				local pkmId = result
                 log("LOG: Oddish Found on BOX: " .. boxId .."  Slot: ".. pkmId .. "  Swapping with pokemon in team N: " .. swapId)
                 return swapPokemonFromPC(boxId, pkmId, swapId)
             end
@@ -173,7 +184,7 @@ function GoldenrodCityQuest:PokecenterGoldenrod()
 end
 
 function GoldenrodCityQuest:GoldenrodCity()
-	if self:needPokecenter() or not game.isTeamFullyHealed() or not self.registeredPokecenter == "Pokecenter Goldenrod" then
+	if self:needPokecenter() or not game.isTeamFullyHealed() or self.registeredPokecenter ~= "Pokecenter Goldenrod" then
 		return moveToMap("Pokecenter Goldenrod")
 	elseif self:needPokemart() then
 		return moveToMap("Goldenrod Mart 1")
@@ -254,7 +265,7 @@ function GoldenrodCityQuest:GoldenrodCityHouse2()
 end
 
 function GoldenrodCityQuest:Route34()
-	if self:needPokecenter() or not self.registeredPokecenter == "Pokecenter Goldenrod" then
+	if self:needPokecenter() or self.registeredPokecenter ~= "Pokecenter Goldenrod" then
 		return moveToMap("Goldenrod City")
 	elseif self.need_oddish and (not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom"))then
 		return moveToMap("Route 34 Stop House")
@@ -280,7 +291,7 @@ function GoldenrodCityQuest:Route34()
 end
 
 function GoldenrodCityQuest:Route34StopHouse()
-	if self:needPokecenter() or not self.registeredPokecenter == "Pokecenter Goldenrod" then
+	if self:needPokecenter() or self.registeredPokecenter ~= "Pokecenter Goldenrod" then
 		return moveToMap("Route 34")
 	elseif self.need_oddish and (not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom"))then
 		self.need_oddish = false

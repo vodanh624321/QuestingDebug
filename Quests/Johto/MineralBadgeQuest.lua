@@ -45,7 +45,7 @@ function MineralBadgeQuest:isDone()
 end
 
 function MineralBadgeQuest:CianwoodCity()
-	if self:needPokecenter() or not game.isTeamFullyHealed() or not self.registeredPokecenter == "Pokecenter Cianwood" then
+	if self:needPokecenter() or not game.isTeamFullyHealed() or self.registeredPokecenter ~= "Pokecenter Cianwood" then
 		moveToMap("Pokecenter Cianwood")
 	elseif not dialogs.potion.state then 
 		moveToMap("Cianwood Shop")
@@ -69,10 +69,10 @@ function MineralBadgeQuest:Route40()
 end
 
 function MineralBadgeQuest:OlivineCity()
-	if BUY_RODS and not hasItem("Super Rod") and getMoney() >= 75000 then
+	if BUY_RODS and hasItem("Good Rod") and not hasItem("Super Rod") and getMoney() >= 75000 then
 		--go to fising guru's map, if you have enough money and want to buy the super rod
 		return moveToMap("Olivine House 1")
-	elseif self:needPokecenter() or not game.isTeamFullyHealed() or not self.registeredPokecenter == "Pokecenter Olivine City" then
+	elseif self:needPokecenter() or not game.isTeamFullyHealed() or self.registeredPokecenter ~= "Pokecenter Olivine City" then
 		moveToMap("Olivine Pokecenter")
 	elseif not dialogs.phare.state then 
 		moveToMap("Glitter Lighthouse 1F")
@@ -84,7 +84,7 @@ end
 
 function MineralBadgeQuest:OlivineHouse1()
 	--talk to the even better fishing guru
-	if not hasItem("Super Rod") then return talkToNpcOnCell(0, 10)
+	if hasItem("Good Rod") and not hasItem("Super Rod") then return talkToNpcOnCell(0, 10)
 	--leave when rod obtained
 	else return moveToMap("Olivine City") end
 end

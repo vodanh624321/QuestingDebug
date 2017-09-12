@@ -28,13 +28,18 @@ function game.isPokemonFullPP(pokemonId)
 end
 
 function game.useAnyMove()
+	sys.debug("game.useAnyMove()", "start", true)
 	local pokemonId = getActivePokemonNumber()
-	for i=1,4 do
-		local moveName = getPokemonMoveName(pokemonId, i)
-		if not moveName and getPokemonMaxPowerPoints(pokemonId, moveId) > 0 then
+	sys.debug("activeId", pokemonId)
+	for moveId=1,4 do
+		local moveName = getPokemonMoveName(pokemonId, moveId)
+		if moveName and getPokemonMaxPowerPoints(pokemonId, moveId) > 0 then
+			sys.debug("Using any move", moveName)
+			sys.debug("game.useAnyMove()", "end", true)
 			return useMove(moveName)
 		end
 	end
+	sys.debug("game.useAnyMove()", "end", true)
 	return false
 end
 
@@ -72,17 +77,6 @@ function game.inRectangle(x1, y1, x2, y2)
 		return true
 	end
 	return false
-end
-
-function game.minTeamLevel()
-	local current
-	for pokemonId=1, getTeamSize(), 1 do
-		local pokemonLevel = getPokemonLevel(pokemonId)
-		if  current == nil or pokemonLevel < current then
-			current = pokemonLevel
-		end
-	end
-	return current
 end
 
 function game.maxTeamLevel()
