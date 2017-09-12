@@ -7,8 +7,8 @@
 
 local sys    = require "Libs/syslib"
 local game   = require "Libs/gamelib"
+local pc     = require "Libs/pclib"
 local Quest  = require "Quests/Quest"
-local Dialog = require "Quests/Dialog"
 
 local name		  = 'Violet City'
 local description = ' Badge Quest'
@@ -36,11 +36,41 @@ function ZephyrBadgeQuest:isDone()
 end
 
 function ZephyrBadgeQuest:PokecenterVioletCity()
-	if isNpcOnCell(11,21) then--Guide BOB
-		return talkToNpcOnCell(11,21)
-	else
-		self:pokecenter("Violet City")
+	--Guide BOB
+	if isNpcOnCell(11,21) then return talkToNpcOnCell(11,21) end
+
+	local sleepPowderer = "Bellsprout"
+	if not hasPokemonInTeam(sleepPowderer) then
+		--check for bellsprout:
+		-- for goldenrod's guard quest - adv in contrast to old oddish:
+		-- 1-- available day and night
+		-- 2-- need to level up here anyway
+		-- 3-- bellsprout has access to sleeppowder 2 levels earlier
+		-- 4-- it can now be leveled with team, instead of doing it an extra training session for oddish only
+		local bellSproutId = {069}
+		local result, pkmBoxId, slotId, swapTeamId = pc.retrieveFirstFromIds(bellSproutId)
+
+		--working 	| then return because of open proShine functions to be resolved
+		--			| if not returned, a "can only execute one function per frame" might occur
+		if result == pc.result.WORKING then return sys.info("Searching PC")
+
+		--no solution, add bellsprout as a force catch
+		elseif  result == pc.result.NO_RESULT then
+			self.pokemon = sleepPowderer
+			self.forceCaught = false
+
+		--has a bellsprout on the pc
+		else
+			local pkm = result
+			local msg = "Found "..pkm.name.." on BOX: " .. pkmBoxId .. "  Slot: " .. slotId
+			if swapTeamId then  msg = msg .. " | Swapping with pokemon in team N: " .. swapTeamId
+			else                msg = msg .. " | Added to team." end
+			return sys.log(msg)
+		end
 	end
+
+	--do other pokecenter stuff
+	self:pokecenter("Violet City")
 end
 
 function ZephyrBadgeQuest:PokecenterRoute32()

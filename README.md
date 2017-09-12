@@ -1,17 +1,19 @@
 - Last Update: 
     - 2017 09 12
     - 20:56 CEST  (UTC +1)
-- CommitID: 8.1
+- CommitID: 8.2
 - CommitLog: 
 ```
-  [merge]
-  - branch: master
-  - commitId: 8
-  - reason: no specific, bringing goldenrod up to date, easier merging later
+[improvement] Goldenrod Guard Quest
+- removed catching an oddish, which could only be caught during night
+- added Bellsprout from Route 32:
+  - it can be leveled up with team, so no extra leveling necessary
+  - bellsprout has access to SleepPowder 2 levels earlier (13 vs 15)
+  - Route 32 we are leveling for a while anyway, so it suggested itself
 ```
 - Branch: GoldenRod Lever Puzzle
 - Features:
-	- none so far
+	- automated Bellspout catching (instead oddish) > less leveling, on the way,... = more efficient
 
 Hi everyone,
 

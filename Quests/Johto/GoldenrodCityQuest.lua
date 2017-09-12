@@ -86,7 +86,6 @@ local GoldenrodCityQuest = Quest:new()
 
 function GoldenrodCityQuest:new()
 	local o = Quest.new(GoldenrodCityQuest, name, description, level, dialogs)
-	o.need_oddish = false
 	o.gavine_done = false
 	o.checkCrate1 = false
 	o.checkCrate2 = false
@@ -110,7 +109,7 @@ function GoldenrodCityQuest:isDoable()
 end
 
 function GoldenrodCityQuest:isDone()
-	if getMapName() == "Goldenrod City" and not isNpcOnCell(50,34) or (getMapName() == "Ilex Forest") then
+	if getMapName() == "Goldenrod City" and not isNpcOnCell(50,34) then
 		return true
 	end
 	return false
@@ -136,50 +135,35 @@ function GoldenrodCityQuest:pokemart_()
 end
 
 function GoldenrodCityQuest:PokecenterGoldenrod()
-	--go catching oddish
-	if self.need_oddish and (not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom")) then
-		log("Oddish with Johto Region NOT FOUND, Next quest: llexForestQuest.lua")
-		return moveToMap("Goldenrod City")
+	--Get Bellsprout From PC || hopefully already done on Route 32 though
+	if hasItem("Basement Key")
+		and dialogs.guardQuestPart2.state
+		and not hasItem("SquirtBottle")
+		and not (hasPokemonInTeam("Bellsprout")
+			or hasPokemonInTeam("Weepinbell"))
+	then
+		local bellSproutId = {069}
+		local result, pkmBoxId, slotId, swapTeamId = pc.retrieveFirstFromIds(bellSproutId)
 
-	--Get Oddish From PC 
-	elseif hasItem("Basement Key") and not hasItem("SquirtBottle") and dialogs.guardQuestPart2.state then
-		if not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom")then
-            --swap with gastly useless against Gavin Director
-            --swap the pokemon with last pokemon in team | comment m1l4: why the highest lvl pkm?
-            sys.todo("check if teamsize is < 6, then replace swap with retrieve", "GoldenRodCityQuest.PokecenterGoldenro")
-            local swapId = game.hasPokemonWithName("Gastly") or getTeamSize()
+		--working 	| then return because of open proShine functions to be resolved
+		--			| if not returned, a "can only execute one function per frame" might occur
+		if result == pc.result.WORKING then return sys.info("Searching PC")
 
-            --check for oddish
-            sys.todo("Adding checks for (1)bellsprout with sleep powder, (2)odish and "..
-            "(3)bellsprout below sleep powder level or (4-8)theier evolutions.", "GoldenRodCityQuest.PokecenterGoldenro")
+		--no solution, terminate quest
+		elseif  result == pc.result.NO_RESULT then
+			return sys.error("Unfortunatly you skipped a quest. So be it, get a Bellsprout or Oddish yourself.")
 
-			local regionMatches = {"Jotho"}
-			local moveMatches = {"Sleep Powder"}
-            local result, boxId = pc.retrieveFirstWithMovesFromRegions(moveMatches, regionMatches)
-
-			--need to be verified with ingame data
-			--oddish, gloom --15
-			--Bellsprout, Weepinbell --13
-			local pkmMatches = {"Oddish", "Gloom", "Bellsprout", "Weepinbell" }
-
-
-
-			-- no solution
-            if result == pc.result.NO_RESULT then self.need_oddish = true
-
-            --still searching
-            elseif result == pc.result.STILL_WORKING then return sys.debug("Starting PC or Switching Boxes")
-
-            --solution found and gastly in team
-			else
-				local pkmId = result
-                log("LOG: Oddish Found on BOX: " .. boxId .."  Slot: ".. pkmId .. "  Swapping with pokemon in team N: " .. swapId)
-                return swapPokemonFromPC(boxId, pkmId, swapId)
-            end
-        end
+		--has a bellsprout on the pc
+		else
+			local pkm = result
+			local msg = "Found "..pkm.name.." on BOX: " .. pkmBoxId .. "  Slot: " .. slotId
+			if swapTeamId then  msg = msg .. " | Swapping with pokemon in team N: " .. swapTeamId
+			else                msg = msg .. " | Added to team." end
+			return sys.log(msg)
+		end
     end
 
-    -- have Oddish
+    -- have Bellsprout
     self:pokecenter("Goldenrod City")
 end
 
@@ -188,8 +172,6 @@ function GoldenrodCityQuest:GoldenrodCity()
 		return moveToMap("Pokecenter Goldenrod")
 	elseif self:needPokemart() then
 		return moveToMap("Goldenrod Mart 1")
-	elseif self.need_oddish and (not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom"))then
-		return moveToMap("Route 34")
 	elseif hasItem("Bike Voucher") then
 		return moveToMap("Goldenrod City Bike Shop")
 	elseif not self:isTrainingOver() then
@@ -197,12 +179,8 @@ function GoldenrodCityQuest:GoldenrodCity()
 	elseif not isNpcOnCell(48,34) then
 		return talkToNpcOnCell(50,34)
 	elseif hasItem("Basement Key") and not hasItem("SquirtBottle") and dialogs.guardQuestPart2.state then --get Oddish on PC and start leveling
-		if not game.hasPokemonWithMove("Sleep Powder") then
-			if hasPokemonInTeam("Oddish") then			
-				return moveToMap("Route 34")
-			else
-				return moveToMap("Pokecenter Goldenrod")
-			end
+		if not game.hasPokemonWithMove("Sleep Powder") then			
+			return moveToMap("Pokecenter Goldenrod")
 		else
 			return moveToMap("Goldenrod Mart 1")
 		end
@@ -267,15 +245,15 @@ end
 function GoldenrodCityQuest:Route34()
 	if self:needPokecenter() or self.registeredPokecenter ~= "Pokecenter Goldenrod" then
 		return moveToMap("Goldenrod City")
-	elseif self.need_oddish and (not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom"))then
-		return moveToMap("Route 34 Stop House")
+
 	elseif not self:isTrainingOver() then
 		return moveToGrass()
+
 	elseif hasItem("Basement Key") and not hasItem("SquirtBottle") and dialogs.guardQuestPart2.state then --get Oddish on PC and start leveling
 		if not game.hasPokemonWithMove("Sleep Powder") then
-			if hasPokemonInTeam("Oddish") or hasPokemonInTeam("Gloom") then
+			if hasPokemonInTeam("Bellsprout") or hasPokemonInTeam("Weepinbell") then
 				if game.getTotalUsablePokemonCount() < getTeamSize() then
-					return moveToMap("Goldenrod City") --oddish is low level so, it will die first every time
+					return moveToMap("Goldenrod City") --Bellsprout is low level so, it will die first every time
 				else
 					return moveToGrass()
 				end
@@ -287,17 +265,6 @@ function GoldenrodCityQuest:Route34()
 		end
 	else
 		return moveToMap("Goldenrod City")
-	end
-end
-
-function GoldenrodCityQuest:Route34StopHouse()
-	if self:needPokecenter() or self.registeredPokecenter ~= "Pokecenter Goldenrod" then
-		return moveToMap("Route 34")
-	elseif self.need_oddish and (not hasPokemonInTeam("Oddish") and not hasPokemonInTeam("Gloom"))then
-		self.need_oddish = false
-		return moveToMap("Ilex Forest")
-	else
-		return moveToMap("Route 34")
 	end
 end
 
@@ -367,23 +334,26 @@ function GoldenrodCityQuest:GoldenrodMart6()
 end
 
 function GoldenrodCityQuest:GoldenrodMartB1F()
-	if hasItem("Basement Key") and not hasItem("SquirtBottle") and dialogs.guardQuestPart2.state and game.hasPokemonWithMove("Sleep Powder") then
+	--not changed any logic, only simplified code || untested
+	local sleepPowderer = team.getPkmWithMove("Sleep Powder")
+	if not sleepPowderer then sys.error("Error . - No Bellsprout or Weepinbell in this team")
+
+	if hasItem("Basement Key")
+		and not hasItem("SquirtBottle")
+		and dialogs.guardQuestPart2.state
+
+	then
 		if isNpcOnCell(13,8) then
+			-- could this be removed, will the answer be overriden by next statement?
+			-- or is this telling the npc, that we have water for him?
 			pushDialogAnswer(2)
-			if  game.hasPokemonWithName("Oddish")  then
-			pushDialogAnswer(game.hasPokemonWithName("Oddish"))
-			elseif game.hasPokemonWithName("Gloom")  then
-			pushDialogAnswer(game.hasPokemonWithName("Gloom"))
-			else
-			fatal("Error . - No Oddish or Gloom in this team")
-			end
+			pushDialogAnswer(sleepPowderer)
+
 			return talkToNpcOnCell(13,8)
-		else
-			return moveToMap("Underground Warehouse")
-		end
-	else
-		return moveToMap("Goldenrod Mart Elevator")
-	end
+
+		else return moveToMap("Underground Warehouse") end
+
+	else return moveToMap("Goldenrod Mart Elevator") end
 end
 
 function GoldenrodCityQuest:UndergroundWarehouse()

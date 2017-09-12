@@ -23,10 +23,7 @@ local dialogs = {
 local IlexForestQuest = Quest:new()
 
 function IlexForestQuest:new()
-	local o = Quest.new(IlexForestQuest, name, description, level, dialogs)
-	o.pokemon = "Oddish"
-	o.forceCaught = false
-	return o
+	return Quest.new(IlexForestQuest, name, description, level, dialogs)
 end
 
 function IlexForestQuest:isDoable()
@@ -64,8 +61,6 @@ function IlexForestQuest:IlexForest()
 				return talkToNpcOnCell(12,58)
 			end
 		end
-	elseif not self.forceCaught then
-		return moveToRectangle(19,46,43,63)
 	else
 		if game.tryTeachMove("Cut","HM01 - Cut") == true then
 			return moveToMap("Route 34 Stop House")
