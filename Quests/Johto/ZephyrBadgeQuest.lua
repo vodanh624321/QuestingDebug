@@ -48,7 +48,7 @@ function ZephyrBadgeQuest:PokecenterVioletCity()
 		-- 3-- bellsprout has access to sleeppowder 2 levels earlier
 		-- 4-- it can now be leveled with team, instead of doing it an extra training session for oddish only
 		local bellSproutId = {069}
-		local result, pkmBoxId, slotId, swapTeamId = pc.retrieveFirstFromIds(bellSproutId)
+		local result, pkmBoxId, slotId, swapTeamId = pc.retrieveFirst{id = bellSproutId, region={"Jotho"}}
 
 		--working 	| then return because of open proShine functions to be resolved
 		--			| if not returned, a "can only execute one function per frame" might occur

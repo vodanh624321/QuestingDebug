@@ -93,23 +93,23 @@ end
 
 --some first interface methods | collected by the current questing needs + some obvious ones
 function pc.retrieveFirstWithMovesFromRegions(moves, regions, swapId)
-    return pc._retrieveFirst{swapId = swapId, moves=moves, region = regions}
+    return pc.retrieveFirst{swapId = swapId, moves=moves, region = regions}
 end
 
 function pc.retrieveFirstFromNamesBelowLvl(pkmNames, level, swapId)
-    return pc._retrieveFirst{swapId = swapId, name = pkmNames, level = level, lvlComparer = gen.smaller}
+    return pc.retrieveFirst{swapId = swapId, name = pkmNames, level = level, lvlComparer = gen.smaller}
 end
 
 function pc.retrieveFirstFromNamesAboveLvl(pkmNames, level, swapId)
-    return pc._retrieveFirst{swapId = swapId, name = pkmNames, level = level, lvlComparer = gen.higher}
+    return pc.retrieveFirst{swapId = swapId, name = pkmNames, level = level, lvlComparer = gen.higher}
 end
 
 function pc.retrieveFirstFromNames(pkmNames, swapId)
-    return pc._retrieveFirst{swapId = swapId, name = pkmNames}
+    return pc.retrieveFirst{swapId = swapId, name = pkmNames}
 end
 
 function pc.retrieveFirstFromIds(ids, swapId)
-    return pc._retrieveFirst{swapId = swapId, id = ids}
+    return pc.retrieveFirst{swapId = swapId, id = ids}
 end
 
 
@@ -183,9 +183,9 @@ end
 --- return slotId, boxId, swapId
 --- @return :
 --- @type : list {dict} integer, integer, integer
-function pc._retrieveFirst(args)
+function pc.retrieveFirst(args)
     --preparing swap target
-    --assert(args.swapId, "pc._retrieveFirst needs a swapId parameter")
+    --assert(args.swapId, "pc.retrieveFirst needs a swapId parameter")
     local swapId = args.swapId or team.getLowestLvlPkm()
     args.swapId = nil
 
@@ -245,7 +245,7 @@ function pc._retrieveFirst(args)
     elseif pc.pkmList == true then
         return pc.result.WORKING
 
-    else sys.debug("pc._retrieveFirst: unsupported state. pc._collect "..
+    else sys.debug("pc.retrieveFirst: unsupported state. pc._collect "..
         "has neither true, false or table as return value.")
     end
 end

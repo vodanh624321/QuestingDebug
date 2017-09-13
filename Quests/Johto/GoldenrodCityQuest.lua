@@ -8,6 +8,7 @@
 local sys    = require "Libs/syslib"
 local pc     = require "Libs/pclib"
 local game   = require "Libs/gamelib"
+local util   = require "Libs/utillib"
 local Quest  = require "Quests/Quest"
 local Dialog = require "Quests/Dialog"
 
@@ -48,39 +49,6 @@ local dialogs = {
 		"he might be able to help"
 	})
 }
-
-local Doors = {
-    [1] = { x = 18, y = 12 }, --this syntax is unneeded, but easy to read
-    [2] = { x = 22, y = 16 },
-    [3] = { x = 18, y = 18 },
-    [4] = { x = 9, y = 18 },
-    [5] = { x = 9, y = 12 },
-    [6] = { x = 13, y = 16 },
-    [7] = { x = 4, y = 16 },
-    [8] = { x = 4, y = 10 },
-}
-
-local leveler_name_base = "Lever "
-local Leveler = {
-    A = leveler_name_base .. "A",
-    B = leveler_name_base .. "B",
-    C = leveler_name_base .. "C",
-    D = leveler_name_base .. "D",
-    E = leveler_name_base .. "E",
-    F = leveler_name_base .. "F",
-}
-
-local DoorActivatesBy = {
-    [1] = { Leveler.A, Leveler.C }, --this syntax is unneeded, but easy to read
-    [2] = { Leveler.D, Leveler.F },
-    [3] = { Leveler.F },
-    [4] = { Leveler.C },
-    [5] = { Leveler.B, Leveler.D },
-    [6] = { Leveler.A, Leveler.E },
-    [7] = { Leveler.B },
-    [8] = { Leveler.E },
-}
-
 
 local GoldenrodCityQuest = Quest:new()
 
@@ -143,7 +111,7 @@ function GoldenrodCityQuest:PokecenterGoldenrod()
 			or hasPokemonInTeam("Weepinbell"))
 	then
 		local bellSproutId = {069}
-		local result, pkmBoxId, slotId, swapTeamId = pc.retrieveFirstFromIds(bellSproutId)
+		local result, pkmBoxId, slotId, swapTeamId = pc.retrieveFirst{id = bellSproutId, region={"Jotho"}}
 
 		--working 	| then return because of open proShine functions to be resolved
 		--			| if not returned, a "can only execute one function per frame" might occur
@@ -338,23 +306,25 @@ function GoldenrodCityQuest:GoldenrodMartB1F()
 	local sleepPowderer = team.getPkmWithMove("Sleep Powder")
 	if not sleepPowderer then sys.error("Error . - No Bellsprout or Weepinbell in this team")
 
-	if hasItem("Basement Key")
-		and not hasItem("SquirtBottle")
-		and dialogs.guardQuestPart2.state
+		if hasItem("Basement Key")
+			and not hasItem("SquirtBottle")
+			and dialogs.guardQuestPart2.state
 
-	then
-		if isNpcOnCell(13,8) then
-			-- could this be removed, will the answer be overriden by next statement?
-			-- or is this telling the npc, that we have water for him?
-			pushDialogAnswer(2)
-			pushDialogAnswer(sleepPowderer)
+		then
+			if isNpcOnCell(13,8) then
+				-- could this be removed, will the answer be overriden by next statement?
+				-- or is this telling the npc, that we have water for him?
+				pushDialogAnswer(2)
+				pushDialogAnswer(sleepPowderer)
 
-			return talkToNpcOnCell(13,8)
+				return talkToNpcOnCell(13,8)
 
-		else return moveToMap("Underground Warehouse") end
+			else return moveToMap("Underground Warehouse") end
 
-	else return moveToMap("Goldenrod Mart Elevator") end
+		else return moveToMap("Goldenrod Mart Elevator") end
+	end
 end
+
 
 function GoldenrodCityQuest:UndergroundWarehouse()
 	if not self.checkCrate1 then --Marill Crate
@@ -429,109 +399,298 @@ function GoldenrodCityQuest:UndergroundWarehouse()
 	end
 end
 
+
+
+
+local Doors = {
+	--this syntax is unneeded, but easy to read
+	[1] = { x = 18, y = 12 },
+	[2] = { x = 22, y = 16 },
+	[3] = { x = 18, y = 18 },
+	[4] = { x = 9, y = 18 },
+	[5] = { x = 9, y = 12 },
+	[6] = { x = 13, y = 16 },
+	[7] = { x = 4, y = 16 },
+	[8] = { x = 4, y = 10 },
+}
+
+local gavin = "$Radio Director Gavin"
+local lever_name_base = "Lever "
+local Lever = {
+	A = lever_name_base .. "A",
+	B = lever_name_base .. "B",
+	C = lever_name_base .. "C",
+	D = lever_name_base .. "D",
+	E = lever_name_base .. "E",
+	F = lever_name_base .. "F",
+}
+
+local LeverActivatesDoors = {
+	[Lever.A] = {1,6},
+	[Lever.B] = {5,7},
+	[Lever.C] = {1,4},
+	[Lever.D] = {2,5},
+	[Lever.E] = {6,8},
+	[Lever.F] = {2,3},
+}
+
+
 function GoldenrodCityQuest:GoldenrodUndergroundBasement()
-    -- BASEMENT LEVELRS PUZZLE
-    log("DEBUG | GoldenRodPuzzle start")
+	-- BASEMENT LEVELRS PUZZLE
+	log("DEBUG | GoldenRodPuzzle start")
 
-    -- Radio Director Gavin
-    if not isNpcOnCell(5, 4) then
-        log("DEBUG | director beaten")
-        dialogs.guardQuestPart2.state = false
-        self.gavin_done = true
+	log("DEBUG | getState: "..tostring(self:getStateRelPos()))
 
-        --leaving
-        if self:isDoorClosed(4) then return talkToNpc(Leveler.E)
-        elseif self:isDoorClosed(1) then return talkToNpc(Leveler.C)
-        else return moveToMap("Goldenrod Underground Path")
-        end
-    end
+--	for k,v in pairs(getNpcData()) do
+--		log(k .."\t"..tostring(v.name))
+--	end
 
-    log("DEBUG | start")
-    if self:isDoorClosed(8) then return self:openDoor(id) end
 
---    for id = 8, 1, -1 do
---        log("DEBUG | is door " .. id .. " closed: " .. tostring(self:isDoorClosed(id)))
---        if self:isDoorClosed(id) then
---            log("DEBUG | opening door " .. id)
---            if self:openDoor(id) then return end
---        end
---    end
+
+
+	-- Radio Director Gavin is still here
+	if isNpcOnCell(5, 4) then
+
+		--calc solution and execute lever order
+		self.puzzleSolution = self.puzzleSolution or self:puzzleSolver(gavin)
+		for _, npc in ipairs(self.puzzleSolution) do return talkToNpc(npc) end
+
+	-- Radio Director Gavin beaten
+	else
+		log("DEBUG | director beaten")
+		dialogs.guardQuestPart2.state = false
+		self.gavin_done = true
+
+		--TM62 - Taunt
+		if isNpcOnCell(8, 8) then return talkToNpcOnCell(8, 8) end
+
+		--leaving
+		self.leavePuzzle = self.leavePuzzle or self:puzzleSolver(gavin)
+
+		--execute
+		for _, npc in ipairs(self.leavePuzzle) do
+			--if first room is accessible, leave
+			if npc == Lever.A then return moveToMap("Goldenrod Underground Path") end
+			--otherwise open doors
+			return talkToNpc(npc)
+		end
+	end
+
 end
 
-function GoldenrodCityQuest:isDoorClosed(doorId)
-    log("DEBUG | isDoorClosed(): " .. doorId)
-    local door = Doors[doorId]
-    return isNpcOnCell(door.x, door.y)
-end
-
-function GoldenrodCityQuest:openDoor(doorId)
-    --    log(DoorActivatesBy[doorId])
-    for _, leveler in pairs(DoorActivatesBy[doorId]) do
-        log("DEBUG | Attempting using : " .. leveler)
-
-        if talkToNpc(leveler) then
-            log("DEBUG | used: " .. leveler)
-            return true
-        end
-    end
+function GoldenrodCityQuest:isDoorOpen(doorId)
+	local door = Doors[doorId]
+	return not isNpcOnCell(door.x, door.y)
 end
 
 
---log("DEBUG | 8")
---if game.inRectangle(19, 0, 40, 20) then
---    return talkToNpcOnCell(26, 13) --Leveler A
---else
---    if isNpcOnCell(8, 8) then --TM62 - Taunt
---        return talkToNpcOnCell(8, 8)
---    elseif isNpcOnCell(5, 4) then --Galvin Director
---        return talkToNpcOnCell(5, 4)
---    else
---        fatal("Error GoldenrodCityQuest:GoldenrodUndergroundBasement()")
---    end
---
---    if not isNpcOnCell(18, 12) and not isNpcOnCell(22, 16) and isNpcOnCell(18, 18) and not isNpcOnCell(13, 16) and isNpcOnCell(9, 12) and not isNpcOnCell(9, 18) and not isNpcOnCell(4, 16) and not isNpcOnCell(4, 10) then --Lever C
---        if isNpcOnCell(5, 4) then --Galvin Director
---            return talkToNpcOnCell(5, 4)
---        else
---            fatal("Error GoldenrodCityQuest:GoldenrodUndergroundBasement()")
---        end
---    else
---        fatal("Error ON PUZZLE RESOLUTION  GoldenrodCityQuest:GoldenrodUndergroundBasement()")
---    end
---end
+--get state related position
+function GoldenrodCityQuest:getStateRelPos()
+	if 		game.inRectangle(19,11, 26,14) 	then return Lever.A --first room
+	elseif 	game.inRectangle(19,17, 26,19) 	then return Lever.B --second room
+	elseif 	game.inRectangle(10,11, 17,14) 	then return Lever.C --third room
+	elseif 	game.inRectangle(10,17, 17,19) 	then return Lever.D --forth room
+	elseif 	game.inRectangle(2,11, 8,14) 	then return Lever.F --sixt room
+	elseif 	game.inRectangle(2,17, 7,19) 	then return Lever.E --fifth room
+	elseif 	game.inRectangle(2,4, 8,8) 		then return gavin	--Gavin
 
---	elseif self:isDoorClosed(1) and self:isDoorClosed(2) and self:isDoorClosed(3) and self:isDoorClosed(6) and self:isDoorClosed(5) and self:isDoorClosed(4) and self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever A
---		log("DEBUG | 1")
---		return talkToNpcOnCell(26,13)
---
---	elseif not self:isDoorClosed(1) and self:isDoorClosed(2) and self:isDoorClosed(3) and self:isDoorClosed(6) and self:isDoorClosed(5) and not self:isDoorClosed(4) and self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever C
---		log("DEBUG | 2")
---		return talkToNpcOnCell(17,13)
---
---	elseif self:isDoorClosed(1) and self:isDoorClosed(2) and self:isDoorClosed(3) and not self:isDoorClosed(6) and self:isDoorClosed(5) and not self:isDoorClosed(4) and self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever D
---		log("DEBUG | 3")
---		return talkToNpcOnCell(17,17)
---
---	elseif self:isDoorClosed(1) and not self:isDoorClosed(2) and self:isDoorClosed(3) and not self:isDoorClosed(6) and not self:isDoorClosed(5) and not self:isDoorClosed(4) and self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever C
---		log("DEBUG | 4")
---		return talkToNpcOnCell(17,13)
---
---	elseif not self:isDoorClosed(1) and not self:isDoorClosed(2) and self:isDoorClosed(3) and self:isDoorClosed(6) and not self:isDoorClosed(5) and not self:isDoorClosed(4) and self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever B
---		log("DEBUG | 5")
---		return talkToNpcOnCell(26,17)
---
---	elseif not self:isDoorClosed(1) and not self:isDoorClosed(2) and self:isDoorClosed(3) and self:isDoorClosed(6) and self:isDoorClosed(5) and not self:isDoorClosed(4) and not self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever C
---		log("DEBUG | 6")
---		return talkToNpcOnCell(17,13)
---
---	elseif self:isDoorClosed(1) and not self:isDoorClosed(2) and self:isDoorClosed(3) and not self:isDoorClosed(6) and self:isDoorClosed(5) and not self:isDoorClosed(4) and not self:isDoorClosed(7) and self:isDoorClosed(8) then --Lever C
---		log("DEBUG | 7")
---		return talkToNpcOnCell(8,19)
---
---	elseif self:isDoorClosed(1) and not self:isDoorClosed(2) and self:isDoorClosed(3) and not self:isDoorClosed(6) and self:isDoorClosed(5) and self:isDoorClosed(4) and not self:isDoorClosed(7) and not self:isDoorClosed(8) then	--Lever C
+	--first room is reachable from outside
+	--simple but:
+	--we didn't consider crosspoints in upper state detection, so this might cause issues
+	else 										 return Lever.A
+	end
+end
 
 
 
+function GoldenrodCityQuest:getStateTransitions(pos)
+	local trs = {} --transitions
 
+	if pos == Lever.A then
+		table.insert(trs, {pos=Lever.B, door=2})
+		table.insert(trs, {pos=Lever.C, door=1})
+
+	elseif pos == Lever.B then
+		table.insert(trs, {pos=Lever.A, door=2})
+		table.insert(trs, {pos=Lever.D, door=3})
+
+	elseif pos == Lever.C then
+		table.insert(trs, {pos=Lever.A, door=1})
+		table.insert(trs, {pos=Lever.D, door=6})
+		table.insert(trs, {pos=Lever.F, door=5})
+
+	elseif pos == Lever.D then
+		table.insert(trs, {pos=Lever.B, door=3})
+		table.insert(trs, {pos=Lever.C, door=6})
+		table.insert(trs, {pos=Lever.E, door=4})
+
+	elseif pos == Lever.E then
+		table.insert(trs, {pos=Lever.D, door=4})
+		table.insert(trs, {pos=Lever.F, door=7})
+
+	elseif pos == Lever.F then
+		table.insert(trs, {pos=Lever.C, door=5})
+		table.insert(trs, {pos=Lever.E, door=7})
+		table.insert(trs, {pos=gavin, door=8})
+
+	elseif pos == gavin then
+		table.insert(trs, {pos=Lever.F, door=8})
+	end
+
+	return trs
+end
+
+function GoldenrodCityQuest:getPossibleStateTransitions(openDoors, pos)
+	local pTrs = {}	--possible transitions
+	for _, tr in pairs(self:getStateTransitions(pos)) do
+		if openDoors[tr.door] then table.insert(pTrs, tr) end
+	end
+
+	return pTrs
+end
+
+
+--BFS algorithm: https://de.wikipedia.org/wiki/Breitensuche
+function GoldenrodCityQuest:puzzleSolver(targetState)
+	--retrieve current door state
+	local doorState = {}
+	for dId, door in ipairs(Doors) do 					--making it dependendant on Doors table, makes future changes
+		sys.debug("dId", dId)
+		sys.debug("isDoorOpen", self:isDoorOpen(dId))
+
+		table.insert(doorState, self:isDoorOpen(dId))	--to door number less rework intensive
+	end
+
+	--create starting conditions
+	local currentNode = {	state = {pos = self:getStateRelPos(), openDoors = doorState},
+		  					lever = {}}
+	local unvisited = {currentNode}
+	local visited = {}
+
+	while #unvisited > 0 do
+		--check first unvisited node
+		local node = table.remove(unvisited)  --pop
+		sys.debug("1. #unvisited", #unvisited)
+
+		table.insert(visited, node)
+
+		--target state reached
+		if node.state.pos == targetState then
+			sys.debug(">>>>>>>>>>>>>>>Solution<<<<<<<<<<<<<<<<<")
+			table.insert(node.lever, node.state.pos)
+			return node.lever
+		end
+
+		--target state not reached: generate other states
+
+		-- either press lever or not
+		for _, press in pairs({true, false}) do
+			sys.debug("current state", node.state.pos)
+			sys.debug("lever pressed", press)
+
+--			util.tablePrint(node.state.openDoors)
+
+			-- make copy, so changes won't affect other states referencing the same table
+			local openDoors = util.copy(node.state.openDoors)
+			local pos 		= util.copy(node.state.pos)
+			local lever 	= util.copy(node.lever)
+
+			sys.debug("copyPos", pos)
+			sys.debug("lever", #lever)
+
+			--modify doors, if lever is pressed
+			if press then
+				openDoors = self:pressLever(openDoors, pos)	--new door states
+				table.insert(lever, pos)					--document lever being pressed
+			end
+
+			local path = ""
+			for _, l in ipairs(lever) do
+				path = path ..", ".. l
+			end
+			sys.debug("path", path)
+			util.tablePrint(openDoors)
+			sys.debug("ways:",#self:getPossibleStateTransitions(openDoors, pos))
+
+			--neighbour rooms bot can reach
+			for i, trans in pairs(self:getPossibleStateTransitions(openDoors, pos)) do
+				local newNode = {	state = {pos = trans.pos, openDoors = openDoors},
+									lever = lever}
+
+				--add state if not already tested previouly
+				if not self:isVisited(visited, newNode) then
+					table.insert(unvisited, newNode)
+				end
+			end
+			sys.debug("2. #unvisited", #unvisited)
+			sys.debug("#visited", #visited)
+
+
+--			if #visited > 1 then return sys.error("testing end") end
+--			if #unvisited > 25 then return sys.error("testing end") end
+
+		end
+	end
+
+	--no solution = nil
+	sys.error("GoldenrodCityQuest.puzzleSolver() couldn't solve the puzzle :(")
+end
+
+function GoldenrodCityQuest:pressLever(openDoors, lever)
+--	sys.debug("GoldenrodCityQuest:pressLever", "start", true)
+--	sys.debug("lever", lever)
+--	sys.debug("doors", #LeverActivatesDoors[lever])
+--	util.tablePrint(LeverActivatesDoors[lever])
+
+	--copy probably unnecessary, since newNode is already deep copied. But makes this method atomic/independent
+	local openDoors = util.copy(openDoors)
+	for _, door in pairs(LeverActivatesDoors[lever]) do
+		openDoors[door] = not openDoors[door]
+	end
+--
+--	util.tablePrint(openDoors)
+--	sys.debug("GoldenrodCityQuest:pressLever", "end", true)
+	return openDoors
+end
+
+
+--ignores the lever table, since looping between room a and b would add an element each time, making it a different table
+function GoldenrodCityQuest:isVisited(visited, node)
+--	sys.debug("GoldenrodCityQuest.isVisited()", "start", true)
+
+	for i, visited_node in pairs(visited) do
+--		util.tablePrint(visited_node.state)
+--		util.tablePrint(visited_node.state.openDoors)
+--		sys.debug("-------", "-------", true)
+--		util.tablePrint(node.state)
+--		util.tablePrint(node.state.openDoors)
+--		sys.debug("-------", "-------", true)
+--		sys.debug(">>>opendoorsD"..tostring(i), #node.state.openDoors, true)
+--		sys.debug("same tables", util.deepcompare(node.openDoors, visited_node.openDoors))
+--		sys.debug("-------", "-------", true)
+--		sys.debug("node.pos", node.state.pos)
+--		sys.debug("visited_node.state.pos", visited_node.state.pos)
+--		sys.debug("sameBotPos", node.state.pos == visited_node.state.pos)
+		if node.state.pos == visited_node.state.pos
+			and util.deepcompare(node.openDoors, visited_node.openDoors)
+		then
+
+--			sys.debug("tables equal", "true")
+--			sys.debug("GoldenrodCityQuest.isVisited()", "end", true)
+			return true
+		end
+
+		sys.debug("tables equal", "false")
+	end
+
+--	sys.debug("GoldenrodCityQuest.isVisited()", "end", true)
+	return false
+end
+
+GoldenrodCityQuest._learningMove = GoldenrodCityQuest.learningMove
+function GoldenrodCityQuest:learningMove(moveName, pokemonIndex)
+	--don't forget sleep powder, while leveling
+	if moveName ~= "Sleep Powder" then return forgetMove(self:chooseForgetMove(moveName, pokemonIndex)) end
+end
 
 return GoldenrodCityQuest

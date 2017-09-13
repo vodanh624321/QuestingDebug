@@ -1,20 +1,22 @@
 - Last Update: 
-    - 2017 09 12
-    - 20:56 CEST  (UTC +1)
-- CommitID: 8.2
+    - 2017 09 13
+    - 19:37 CEST  (UTC +1)
+- CommitID: 8.3
 - CommitLog: 
 ```
-[improvement] Goldenrod Guard Quest
-- removed catching an oddish, which could only be caught during night
-- added Bellsprout from Route 32:
-  - it can be leveled up with team, so no extra leveling necessary
-  - bellsprout has access to SleepPowder 2 levels earlier (13 vs 15)
-  - Route 32 we are leveling for a while anyway, so it suggested itself
+[fix]
+- added Jotho dependency to retrieving process
+
+[improvement] Lever Quest
+- removed that 50 long if statment queue, which in all honesty I couldn't read at all. Instead:
+- puzzle solver added. Can work even if they decide to rearrange doors or levers. Just modify 
+  input tables at that time.
 ```
 - Branch: GoldenRod Lever Puzzle
 - Features:
 	- automated Bellspout catching (instead oddish) > less leveling, on the way,... = more efficient
-
+    - puzzle solver
+    
 Hi everyone,
 
 **[introduction]**
