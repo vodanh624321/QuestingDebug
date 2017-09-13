@@ -1,22 +1,14 @@
 - Last Update: 
     - 2017 09 13
-    - 19:37 CEST  (UTC +1)
-- CommitID: 8.3
+    - 19:42 CEST  (UTC +1)
+- CommitID: 8.4
 - CommitLog: 
 ```
-[fix]
-- added Jotho dependency to retrieving process
-
-[improvement] Lever Quest
-- removed that 50 long if statment queue, which in all honesty I couldn't read at all. Instead:
-- puzzle solver added. Can work even if they decide to rearrange doors or levers. Just modify 
-  input tables at that time.
+ [merge]
+  - branch: master
+  - commitId: 18
+  - reason: needed, if not beating radio manager gavin
 ```
-- Branch: GoldenRod Lever Puzzle
-- Features:
-	- automated Bellspout catching (instead oddish) > less leveling, on the way,... = more efficient
-    - puzzle solver
-    
 Hi everyone,
 
 **[introduction]**
