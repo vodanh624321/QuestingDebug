@@ -1,4 +1,4 @@
--- Copyright © 2016 g0ld <g0ld@tuta.io>
+-- Copyright Â© 2016 g0ld <g0ld@tuta.io>
 -- This work is free. You can redistribute it and/or modify it under the
 -- terms of the Do What The Fuck You Want To Public License, Version 2,
 -- as published by Sam Hocevar. See the COPYING file for more details.
@@ -69,7 +69,7 @@ function MineralBadgeQuest:Route40()
 end
 
 function MineralBadgeQuest:OlivineCity()
-	if self:needPokecenter() or not game.isTeamFullyHealed() or not self.registeredPokecenter == "Pokecenter Olivine City" then
+	if self:needPokecenter() or not game.isTeamFullyHealed() or not self.registeredPokecenter == "Olivine Pokecenter" then
 		moveToMap("Olivine Pokecenter")
 	elseif not dialogs.phare.state then 
 		moveToMap("Glitter Lighthouse 1F")
