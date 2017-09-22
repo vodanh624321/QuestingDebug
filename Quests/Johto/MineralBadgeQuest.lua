@@ -72,7 +72,7 @@ function MineralBadgeQuest:OlivineCity()
 	if BUY_RODS and hasItem("Good Rod") and not hasItem("Super Rod") and getMoney() >= 75000 then
 		--go to fising guru's map, if you have enough money and want to buy the super rod
 		return moveToMap("Olivine House 1")
-	elseif self:needPokecenter() or not game.isTeamFullyHealed() or self.registeredPokecenter ~= "Pokecenter Olivine City" then
+	elseif self:needPokecenter() or not game.isTeamFullyHealed() or self.registeredPokecenter ~= "Olivine Pokecenter" then
 		moveToMap("Olivine Pokecenter")
 	elseif not dialogs.phare.state then 
 		moveToMap("Glitter Lighthouse 1F")
