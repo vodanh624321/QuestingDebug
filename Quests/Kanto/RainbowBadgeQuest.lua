@@ -12,7 +12,7 @@ local Dialog = require "Quests/Dialog"
 
 local name		  = 'Rainbow Badge'
 local description = 'Beat Erika + Get Lemonade for future quest'
-local level = 31
+local level = 35
 
 local dialogs = {
 	martElevatorFloor1 = Dialog:new({ 
@@ -89,7 +89,7 @@ function RainbowBadgeQuest:PokecenterCeladon()
 end
 
 function RainbowBadgeQuest:Route7()
-	if self:needPokecenter() or not game.isTeamFullyHealed() or self.registeredPokecenter ~= "Pokecenter Celadon" then
+	if self:needPokecenter() or self.registeredPokecenter ~= "Pokecenter Celadon" then
 		return moveToMap("Celadon City")
 	elseif hasItem("Rainbow Badge") and hasItem("Lemonade") then
 		return moveToMap("Underground House 3")

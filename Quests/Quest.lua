@@ -186,14 +186,22 @@ function Quest:needPokecenter()
 
 	-- else we would spend more time evolving the higher level ones
 	elseif not self:isTrainingOver() then
+		-- self.healPokemonOnceTrainingIsOver = false
+		-- log('not isTrainingOver')
 		-- <= needed, if last pkm has no pp, it's also unusable therefor value = 0
 		if getUsablePokemonCount() <= 1
 			or not team.getAlivePkmToLvl(self.level)
-		then return true end
+		then 
+		-- log("getUsablePokemonCount:"..getUsablePokemonCount())
+		-- log("getAlivePkmToLvl:"..team.getAlivePkmToLvl(self.level))
+		return true 
+		end
 
 	elseif not game.isTeamFullyHealed()
 		and self.healPokemonOnceTrainingIsOver
-	then return true
+	then 
+	-- log('not isTeamFullyHealed')
+	return true
 
 	-- the team is fully healed and training over
 	else self.healPokemonOnceTrainingIsOver = false end
@@ -277,14 +285,37 @@ function Quest:battle()
 	local isEventPkm = getOpponentForm() ~= 0
 	if isWildBattle() 													--if it's a wild battle:
 		and (isOpponentShiny() 											--catch special pkm
-			or isEventPkm
-			or (not isAlreadyCaught() 									--catch not seen pkm
+			-- or isEventPkm
+			-- or (not isAlreadyCaught() 									--catch not seen pkm
+				-- and not self:isPokemonBlacklisted(getOpponentName()))
+			-- or (self.pokemon 											--catch quest related pkm
+				-- and getOpponentName() == self.pokemon
+				-- and self.forceCaught ~= nil
+				-- and self.forceCaught == false)
+		)
+	then if useItem("Pokeball") or useItem("Great Ball") or useItem("Ultra Ball") then return true end end
+	
+	if isWildBattle() and (isEventPkm
+			or (not isAlreadyCaught() 			--catch not seen pkm
 				and not self:isPokemonBlacklisted(getOpponentName()))
-			or (self.pokemon 											--catch quest related pkm
+			or (self.pokemon 					--catch quest related pkm
 				and getOpponentName() == self.pokemon
 				and self.forceCaught ~= nil
-				and self.forceCaught == false))
-	then if useItem("Pokeball") or useItem("Great Ball") or useItem("Ultra Ball") then return true end end
+				and self.forceCaught == false)
+		) then
+		log("Catch...."..getOpponentName())
+		if getOpponentHealthPercent() > 60 then
+			log("Catch....HP:" .. getOpponentHealthPercent())
+			if getPokemonHealthPercent(getActivePokemonNumber()) < 50 or not isPokemonUsable(getActivePokemonNumber()) then
+                local requestedId, requestedLevel = game.getMaxLevelUsablePokemon()
+                return sendPokemon(requestedId) or sendUsablePokemon() or sendAnyPokemon() or run()
+            else
+                return weakAttack() or sendUsablePokemon() or sendAnyPokemon() or run()
+            end
+		else
+            if useItem("Pokeball") or useItem("Great Ball") or useItem("Ultra Ball") then return true end
+		end
+	end
 
 	--fighting
 	local isTeamUsable = getTeamSize() == 1 --if it's our starter, it has to atk

@@ -34,41 +34,41 @@ local VolcanoBadgeQuest   = require('Quests/Kanto/VolcanoBadgeQuest')
 local ReviveFossilQuest   = require('Quests/Kanto/ReviveFossilQuest')
 local EarthBadgeQuest     = require('Quests/Kanto/EarthBadgeQuest')
 local ExpForElite4Kanto   = require('Quests/Kanto/ExpForElite4Kanto')
-local Elite4Kanto         = require('Quests/Kanto/Elite4Kanto')
-local GoToJohtoQuest      = require('Quests/Kanto/GoToJohtoQuest')
+-- local Elite4Kanto         = require('Quests/Kanto/Elite4Kanto')
+-- local GoToJohtoQuest      = require('Quests/Kanto/GoToJohtoQuest')
 
 
 --Johto
-local StartJohtoQuest     = require('Quests/Johto/StartJohtoQuest')
-local ZephyrBadgeQuest    = require('Quests/Johto/ZephyrBadgeQuest')
-local SproutTowerQuest    = require('Quests/Johto/SproutTowerQuest')
-local HiveBadgeQuest      = require('Quests/Johto/HiveBadgeQuest')
-local IlexForestQuest     = require('Quests/Johto/IlexForestQuest')
-local GoldenrodCityQuest  = require('Quests/Johto/GoldenrodCityQuest')
-local PlainBadgeQuest     = require('Quests/Johto/PlainBadgeQuest')
-local FogBadgeQuest		  = require('Quests/Johto/FogBadgeQuest')
-local StormBadgeQuest     = require('Quests/Johto/StormBadgeQuest')
-local MineralBadgeQuest	  = require('Quests/Johto/MineralBadgeQuest')
-local GlacierBadgeQuest	  = require('Quests/Johto/GlacierBadgeQuest')
-local RisingBadgeQuest	  = require('Quests/Johto/RisingBadgeQuest')
-local Elite4Johto	  = require('Quests/Johto/Elite4Johto')
+-- local StartJohtoQuest     = require('Quests/Johto/StartJohtoQuest')
+-- local ZephyrBadgeQuest    = require('Quests/Johto/ZephyrBadgeQuest')
+-- local SproutTowerQuest    = require('Quests/Johto/SproutTowerQuest')
+-- local HiveBadgeQuest      = require('Quests/Johto/HiveBadgeQuest')
+-- local IlexForestQuest     = require('Quests/Johto/IlexForestQuest')
+-- local GoldenrodCityQuest  = require('Quests/Johto/GoldenrodCityQuest')
+-- local PlainBadgeQuest     = require('Quests/Johto/PlainBadgeQuest')
+-- local FogBadgeQuest		  = require('Quests/Johto/FogBadgeQuest')
+-- local StormBadgeQuest     = require('Quests/Johto/StormBadgeQuest')
+-- local MineralBadgeQuest	  = require('Quests/Johto/MineralBadgeQuest')
+-- local GlacierBadgeQuest	  = require('Quests/Johto/GlacierBadgeQuest')
+-- local RisingBadgeQuest	  = require('Quests/Johto/RisingBadgeQuest')
+-- local Elite4Johto	  = require('Quests/Johto/Elite4Johto')
 
---Hoenn
-local FromLittlerootToWoodsQuest = require('Quests/Hoenn/FromLittlerootToWoodsQuest')
-local StoneBadgeQuest 			 = require('Quests/Hoenn/StoneBadgeQuest')
-local getSLetter 				 = require('Quests/Hoenn/getSLetter')
-local KnuckleBadgeQuest 		 = require('Quests/Hoenn/KnuckleBadgeQuest')
-local toMauville 				 = require('Quests/Hoenn/toMauville')
-local DynamoBadge				 = require('Quests/Hoenn/DynamoBadge')
-local ToLavaridgeTown	  		 = require('Quests/Hoenn/ToLavaridgeTown')
-local ToBalanceBadge 		     = require('Quests/Hoenn/ToBalanceBadge')
-local ToFortreeCity  		     = require('Quests/Hoenn/ToFortreeCity')
-local GetTheOrbs 				 = require('Quests/Hoenn/GetTheOrbs')
-local MagmaHideout			     = require('Quests/Hoenn/MagmaHideout')
-local ToMossdeepCity			 = require('Quests/Hoenn/ToMossdeepCity')
-local meetKyogre			     = require('Quests/Hoenn/meetKyogre')
-local beatDeoxys				 = require('Quests/Hoenn/beatDeoxys')
-local e4Hoenn					 = require('Quests/Hoenn/e4Hoenn')
+-- --Hoenn
+-- local FromLittlerootToWoodsQuest = require('Quests/Hoenn/FromLittlerootToWoodsQuest')
+-- local StoneBadgeQuest 			 = require('Quests/Hoenn/StoneBadgeQuest')
+-- local getSLetter 				 = require('Quests/Hoenn/getSLetter')
+-- local KnuckleBadgeQuest 		 = require('Quests/Hoenn/KnuckleBadgeQuest')
+-- local toMauville 				 = require('Quests/Hoenn/toMauville')
+-- local DynamoBadge				 = require('Quests/Hoenn/DynamoBadge')
+-- local ToLavaridgeTown	  		 = require('Quests/Hoenn/ToLavaridgeTown')
+-- local ToBalanceBadge 		     = require('Quests/Hoenn/ToBalanceBadge')
+-- local ToFortreeCity  		     = require('Quests/Hoenn/ToFortreeCity')
+-- local GetTheOrbs 				 = require('Quests/Hoenn/GetTheOrbs')
+-- local MagmaHideout			     = require('Quests/Hoenn/MagmaHideout')
+-- local ToMossdeepCity			 = require('Quests/Hoenn/ToMossdeepCity')
+-- local meetKyogre			     = require('Quests/Hoenn/meetKyogre')
+-- local beatDeoxys				 = require('Quests/Hoenn/beatDeoxys')
+-- local e4Hoenn					 = require('Quests/Hoenn/e4Hoenn')
 
 local quests = {
 	-- Kanto Quests
@@ -100,40 +100,40 @@ local quests = {
 	ReviveFossilQuest:new(),
 	EarthBadgeQuest:new(),
 	ExpForElite4Kanto:new(),
-	Elite4Kanto:new(),
-	GoToJohtoQuest:new(),
+	-- Elite4Kanto:new(),
+	-- GoToJohtoQuest:new(),
 	
-	-- Johto Quests 
-	StartJohtoQuest:new(),
-	ZephyrBadgeQuest:new(),
-	SproutTowerQuest:new(),
-	HiveBadgeQuest:new(),
-	IlexForestQuest:new(),
-	GoldenrodCityQuest:new(),
-	PlainBadgeQuest:new(),
-	FogBadgeQuest:new(),
-	StormBadgeQuest:new(),
-	MineralBadgeQuest:new(),
-	GlacierBadgeQuest:new(),
-	RisingBadgeQuest:new(),
-	Elite4Johto:new(),
+	-- -- Johto Quests 
+	-- StartJohtoQuest:new(),
+	-- ZephyrBadgeQuest:new(),
+	-- SproutTowerQuest:new(),
+	-- HiveBadgeQuest:new(),
+	-- IlexForestQuest:new(),
+	-- GoldenrodCityQuest:new(),
+	-- PlainBadgeQuest:new(),
+	-- FogBadgeQuest:new(),
+	-- StormBadgeQuest:new(),
+	-- MineralBadgeQuest:new(),
+	-- GlacierBadgeQuest:new(),
+	-- RisingBadgeQuest:new(),
+	-- Elite4Johto:new(),
 	
-	--HoennQuest
-	FromLittlerootToWoodsQuest:new(),
-	StoneBadgeQuest:new(),
-	getSLetter:new(),
-	KnuckleBadgeQuest:new(),
-	toMauville:new(),
-	DynamoBadge:new(),
-	ToLavaridgeTown:new(),
-	ToBalanceBadge:new(),
-	ToFortreeCity:new(),
-	GetTheOrbs:new(),
-	MagmaHideout:new(),
-	ToMossdeepCity:new(),
-	meetKyogre:new(),
-	beatDeoxys:new(),
-	e4Hoenn:new()
+	-- --HoennQuest
+	-- FromLittlerootToWoodsQuest:new(),
+	-- StoneBadgeQuest:new(),
+	-- getSLetter:new(),
+	-- KnuckleBadgeQuest:new(),
+	-- toMauville:new(),
+	-- DynamoBadge:new(),
+	-- ToLavaridgeTown:new(),
+	-- ToBalanceBadge:new(),
+	-- ToFortreeCity:new(),
+	-- GetTheOrbs:new(),
+	-- MagmaHideout:new(),
+	-- ToMossdeepCity:new(),
+	-- meetKyogre:new(),
+	-- beatDeoxys:new(),
+	-- e4Hoenn:new()
 }
 
 function QuestManager:new(o)
