@@ -113,6 +113,9 @@ function team.getLowestPkmAlive()
 end
 
 function team.getLowestLvl()
+    if team.getLowestLvlPkm() == nil then
+        return 0
+    end
     return getPokemonLevel(team.getLowestLvlPkm())
 end
 

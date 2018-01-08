@@ -321,16 +321,16 @@ function Quest:battle()
 	local isTeamUsable = getTeamSize() == 1 --if it's our starter, it has to atk
 		or getUsablePokemonCount() > 1		--otherwise we atk, as long as we have 2 usable pkm
 	if isTeamUsable then
-		--level low leveled pkm | switching
-		local opponentLevel = getOpponentLevel()
-		local myPokemonLvl  = getPokemonLevel(getActivePokemonNumber())
-		if opponentLevel >= myPokemonLvl
-			and self.canSwitch
-		then
-			local requestedId, requestedLevel = game.getMaxLevelUsablePokemon()
-			if requestedLevel > myPokemonLvl
-				and requestedId ~= nil
-			then return sendPokemon(requestedId) end
+
+		if isWildBattle() or not self:isTrainingOver() then
+			--level low leveled pkm | switching
+			local opponentLevel = getOpponentLevel()
+			local myPokemonLvl  = getPokemonLevel(getActivePokemonNumber())
+			if opponentLevel >= myPokemonLvl and self.canSwitch then
+				local requestedId, requestedLevel = game.getMaxLevelUsablePokemon()
+				if requestedLevel > myPokemonLvl and requestedId ~= nil
+				then return sendPokemon(requestedId) end
+			end
 		end
 
 		--actual battle
@@ -340,7 +340,12 @@ function Quest:battle()
 			or self.canSwitch and sendAnyPokemon()		--switch in any alive pkm if able
 			or game.useAnyMove()						--use none damaging moves, to progress battle round
 		then return sys.debug("fighting team", "battle action performed")
-		else return sys.error("quest.battle", "no battle action for a fighting team") end
+		else 
+			if sendUsablePokemon() or sendAnyPokemon() or run() then
+				return true
+			end
+			return sys.error("quest.battle", "no battle action for a fighting team")
+		end
 	end
 
 	-- running
@@ -350,7 +355,8 @@ function Quest:battle()
 		or self.canSwitch and sendAnyPokemon()     	--4. we try to switch to any pokemon alive
 		or game.useAnyMove()                     	--5. we try to use non-damaging attack
 		--or BattleManager.useAnyAction()             --6. we try to use garbage items
-	then return end sys.debug("running team", "battle action performed")
+	then return end 
+	sys.debug("running team", "battle action performed")
 	sys.error("quest.battle", "no battle action for a running team")
 
 end
