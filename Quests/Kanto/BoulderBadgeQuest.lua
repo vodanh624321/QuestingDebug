@@ -13,7 +13,7 @@ local description = 'from route 2 to route 3'
 
 local BoulderBadgeQuest = Quest:new()
 function BoulderBadgeQuest:new()
-	return Quest.new(BoulderBadgeQuest, name, description, 14)
+	return Quest.new(BoulderBadgeQuest, name, description, 12)
 end
 
 function BoulderBadgeQuest:isDoable()

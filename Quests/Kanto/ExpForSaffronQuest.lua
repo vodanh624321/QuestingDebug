@@ -79,7 +79,7 @@ end
 
 function ExpForSaffronQuest:isFinishedFarming()
 	return self:isTrainingOver() 					--as before: training
-		and (not BUY_BIKE or getMoney() > 60000)	--additional: money farming, when buying bike is set
+		and (not BUY_BIKE or getMoney() > 70000)	--additional: money farming, when buying bike is set
 end
 
 function ExpForSaffronQuest:SeafoamB4F()
