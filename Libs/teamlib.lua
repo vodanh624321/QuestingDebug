@@ -11,7 +11,7 @@ local gen = require("Libs/genlib")
 --|x, y| x + y is shorthand for function(x,y) return x+y end.
 team = {}
 --pkm conditions
-function team.isPkmAlive(i) return getPokemonHealth(i) > 0 end
+function team.isPkmAlive(i) return getPokemonHealth(i) > 0 and isPokemonUsable(i) end
 function team.isPkmToLvl(i, lvl_cap) return getPokemonLevel(i) < lvl_cap end
 function team.isPkmToLvlAlive(i, lvl_cap) return team.isPkmAlive(i) and team.isPkmToLvl(i, lvl_cap) end
 function team.isPkmToLvlUsable(i, lvl_cap) return isPokemonUsable(i) and team.isPkmToLvl(i, lvl_cap) end

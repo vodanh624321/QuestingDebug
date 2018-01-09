@@ -101,7 +101,8 @@ function ExpForSaffronQuest:SeafoamB4F()
 	end
 
 	--else farm / provoke feinting
-	return moveToRectangle(50,10,62,32)
+	return moveToRectangle(50, 24, 57, 32)
+	--return moveToRectangle(50,10,62,32)
 end
 
 return ExpForSaffronQuest

@@ -106,7 +106,7 @@ end
 
 function Quest:leftovers()
 	if leftovers_disabled then return end
-	ItemName = "Leftovers"
+	local ItemName = "Leftovers"
 	local PokemonNeedLeftovers = game.getFirstUsablePokemon()
 	local PokemonWithLeftovers = game.getPokemonIdWithItem(ItemName)
 	
@@ -192,8 +192,8 @@ function Quest:needPokecenter()
 		if getUsablePokemonCount() <= 1
 			or not team.getAlivePkmToLvl(self.level)
 		then 
-		-- log("getUsablePokemonCount:"..getUsablePokemonCount())
-		-- log("getAlivePkmToLvl:"..team.getAlivePkmToLvl(self.level))
+--		 log("getUsablePokemonCount:"..getUsablePokemonCount())
+--		 log("getAlivePkmToLvl:"..team.getAlivePkmToLvl(self.level))
 		return true 
 		end
 
